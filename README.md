@@ -19,7 +19,7 @@
 
 **P3 Studio** 是一款桌面音频转换与播放工具，围绕 **P3 音频格式** 设计 —— 这是一种基于 Opus 编码的轻量化自定义音频格式，专为嵌入式 AI 语音助手（如 ESP32 开发板）优化。
 
-该项目最初是 [zhicloud_esp32](https://github.com/adkjkjdsaghj/zhicloud_esp32) 板级项目的工具链组件，为 ESP32 AI 语音助手开发提供便捷的音频样本处理与播放功能。
+该项目最初是 [zhicloud_esp32](https://github.com/JLAEN999/zhicloud_esp32) 板级项目的工具链组件，为 ESP32 AI 语音助手开发提供便捷的音频样本处理与播放功能。
 
 > **为什么用 P3？** — `.p3` 格式将 Opus 编码的音频封装为 16 kHz 单声道，在文件大小和语音清晰度之间取得了完美平衡。非常适合存储空间和带宽有限的嵌入式系统。
 
@@ -64,7 +64,7 @@ P3Studio.exe --selftest <输出目录>
 
 ### 方式一：直接下载 EXE（Windows，推荐）
 
-1. 从 [Releases 页面](https://github.com/adkjkjdsaghj/p3-studio/releases) 下载最新的 `P3Studio.exe`
+1. 从 [Releases 页面](https://github.com/JLAEN999/p3-studio/releases) 下载最新的 `P3Studio.exe`
 2. 放在任意位置 —— **无需安装，双击即用**
 
 > **系统要求**：Windows 10/11 64 位。无需安装 Python 或任何依赖库。
@@ -73,7 +73,7 @@ P3Studio.exe --selftest <输出目录>
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/adkjkjdsaghj/p3-studio.git
+git clone https://github.com/JLAEN999/p3-studio.git
 cd p3-studio
 
 # 2. 安装依赖
@@ -259,7 +259,7 @@ result: Pass (src=0.84s dst=0.90s delta=0.06s)
 
 ## 🤝 贡献指南
 
-欢迎提交 Issue 和 Pull Request！这是一个小型的专注工具，建议先开 [Issue](https://github.com/adkjkjdsaghj/p3-studio/issues) 讨论你的想法。
+欢迎提交 Issue 和 Pull Request！这是一个小型的专注工具，建议先开 [Issue](https://github.com/JLAEN999/p3-studio/issues) 讨论你的想法。
 
 **待改进方向：**
 - Linux / macOS 支持（需要原生 opus 库）
@@ -274,6 +274,14 @@ result: Pass (src=0.84s dst=0.90s delta=0.06s)
 ## 📜 开源许可
 
 本项目基于 **MIT License** 开源。详见 [LICENSE](LICENSE) 文件。
+
+---
+
+## 📬 联系我
+
+如有问题、建议或合作意向，欢迎邮件联系：
+
+**2860339908@qq.com**
 
 ---
 
