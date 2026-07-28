@@ -2,7 +2,7 @@
 
 # P3 Studio 🔊
 
-**轻量级 WAV ↔ P3 音频转换 & 播放器 · 机甲风格桌面工具**
+**轻量级 WAV ↔ P3 音频转换 & 播放器 **
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -19,7 +19,7 @@
 
 **P3 Studio** 是一款桌面音频转换与播放工具，围绕 **P3 音频格式** 设计 —— 这是一种基于 Opus 编码的轻量化自定义音频格式，专为嵌入式 AI 语音助手（如 ESP32 开发板）优化。
 
-该项目最初是 [zhicloud_esp32](https://github.com/JLAEN999/zhicloud_esp32) 板级项目的工具链组件，为 ESP32 AI 语音助手开发提供便捷的音频样本处理与播放功能。
+该项目最初是小智ai项目的工具链组件，为 ESP32 AI 语音助手开发提供便捷的音频样本处理与播放功能。
 
 > **为什么用 P3？** — `.p3` 格式将 Opus 编码的音频封装为 16 kHz 单声道，在文件大小和语音清晰度之间取得了完美平衡。非常适合存储空间和带宽有限的嵌入式系统。
 
