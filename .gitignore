@@ -1,0 +1,46 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.spec
+
+# --- Virtual Environment ---
+venv/
+.venv/
+env/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+Thumbs.db
+.DS_Store
+
+# --- Build artifacts ---
+P3Studio.exe
+P3Selftest.exe
+CheckSD.exe
+
+# --- Testing ---
+_selftest*/
+_st*/
+_t/
+selftest_out/
+test_core.py
+check_sd.py
+run_selftest.py
+smoke_test_ui.py
+
+# --- Assets ---
+assets/
+
+# --- User data ---
+*.wav
+*.p3
