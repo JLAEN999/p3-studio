@@ -1,144 +1,141 @@
-<!-- markdownlint-disable MD033 MD041 -->
-
 <div align="center">
 
 # P3 Studio 🔊
 
-**A lightweight WAV ↔ P3 audio converter & player with a Mecha-themed UI**
+**轻量级 WAV ↔ P3 音频转换 & 播放器 · 机甲风格桌面工具**
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows&logoColor=white)]()
-[![Opus](https://img.shields.io/badge/Codec-Opus-DA6B20?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDY0IDY0Ij48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMzIgNkMxNy42IDYgNiAxNy42IDYgMzJzMTEuNiAyNiAyNiAyNiAyNi0xMS42IDI2LTI2UzQ2LjQgNiAzMiA2em0wIDQ4Yy0xMi4xIDAtMjItOS45LTIyLTIyczkuOS0yMiAyMi0yMiAyMiA5LjkgMjIgMjItOS45IDIyLTIyIDIyeiIvPjwvc3ZnPg==)](https://opus-codec.org)
+[![Opus](https://img.shields.io/badge/Codec-Opus-DA6B20?logo=opus)](https://opus-codec.org)
 
-[✨ Features](#-features) • [📦 Installation](#-installation) • [🎮 Usage](#-usage) • [🛠️ Build from Source](#️-build-from-source) • [🏗️ Architecture](#️-architecture) • [📁 Project Structure](#-project-structure) • [🔧 Troubleshooting](#-troubleshooting) • [📜 License](#-license)
+[✨ 功能特性](#-功能特性) • [📦 安装方法](#-安装方法) • [🎮 使用指南](#-使用指南) • [🛠️ 自行编译](#️-自行编译) • [🏗️ 项目架构](#️-项目架构) • [📁 目录结构](#-目录结构) • [🔧 常见问题](#-常见问题) • [📜 开源许可](#-开源许可)
 
 </div>
 
 ---
 
-## 📖 Overview
+## 📖 项目简介
 
-P3 Studio is a desktop application for **audio format conversion** and **playback**, specifically designed around the **P3 audio format** — a custom Opus-based container format optimized for embedded AI voice assistant applications (e.g., ESP32-based voice assistants).
+**P3 Studio** 是一款桌面音频转换与播放工具，围绕 **P3 音频格式** 设计 —— 这是一种基于 Opus 编码的轻量化自定义音频格式，专为嵌入式 AI 语音助手（如 ESP32 开发板）优化。
 
-The project was originally developed as a toolchain component for the [zhicloud_esp32](https://github.com/adkjkjdsaghj/zhicloud_esp32) board-level project, providing a convenient way to prepare and play audio samples for ESP32 AI voice assistant development.
+该项目最初是 [zhicloud_esp32](https://github.com/adkjkjdsaghj/zhicloud_esp32) 板级项目的工具链组件，为 ESP32 AI 语音助手开发提供便捷的音频样本处理与播放功能。
 
-> **Why P3?** — The `.p3` format wraps Opus-encoded audio at 16 kHz mono, striking the perfect balance between file size and voice clarity. It's ideal for embedded systems where storage and bandwidth are limited, but voice intelligibility is critical.
+> **为什么用 P3？** — `.p3` 格式将 Opus 编码的音频封装为 16 kHz 单声道，在文件大小和语音清晰度之间取得了完美平衡。非常适合存储空间和带宽有限的嵌入式系统。
 
 ---
 
-## ✨ Features
+## ✨ 功能特性
 
-### 🔄 Audio Conversion
+### 🔄 音频转换
 
-| Direction | Input | Output | Notes |
-|-----------|-------|--------|-------|
-| **WAV → P3** | `.wav`, `.flac`, `.ogg` | `.p3` | Automatic resampling to 16 kHz mono, Opus encoding |
-| **P3 → WAV** | `.p3` | `.wav` | Decode back to 16 kHz PCM WAV |
-| **Batch processing** | Multiple files | Per-file output | Select multiple files; all converted sequentially |
+| 方向 | 输入格式 | 输出格式 | 说明 |
+|------|----------|----------|------|
+| **WAV → P3** | `.wav` / `.flac` / `.ogg` | `.p3` | 自动重采样至 16 kHz 单声道，Opus 编码 |
+| **P3 → WAV** | `.p3` | `.wav` | 解码回 16 kHz PCM WAV |
+| **批量处理** | 多文件选择 | 逐文件输出 | 批量添加，依次转换 |
 
-### 🎚️ Loudness Normalization
+### 🎚️ 响度归一化
 
-- **ITU-R BS.1770 LUFS normalization** using `pyloudnorm`
-- Default target: **−16 LUFS** (optimal for embedded voice output)
-- **Disable for TTS audio** — prevents clipping on pre-optimized speech samples
-- Toggle on/off per conversion session
+- 基于 **ITU-R BS.1770 标准** 的 LUFS 响度归一化（使用 `pyloudnorm`）
+- 默认目标：**−16 LUFS**（嵌入式语音输出的最佳值）
+- **TTS 音频建议关闭**此功能 —— 防止预先优化的语音样本出现削波
+- 可在每次转换前自由开关
 
-### ▶️ P3 Playback
+### ▶️ P3 播放功能
 
-- Native P3 file playback via `sounddevice` + PortAudio
-- Play / Pause / Stop controls
-- **Loop mode** for repeated listening
-- Playlist management — add / remove files
-- Click to select; status bar shows current track and state
+- 原生 P3 文件播放（基于 `sounddevice` + PortAudio）
+- 播放 / 暂停 / 停止 控制
+- **循环播放模式**，便于反复试听
+- 播放列表管理 —— 添加 / 删除文件
+- 单击选中，状态栏实时显示当前曲目和状态
 
-### 🎨 Mecha-themed UI
+### 🎨 机甲风格界面
 
-- **Clean white background** with cyan (`#00acc1`) accent color system
-- Custom **diamond (◆)** radio indicators and **hex (⬢)** check indicators
-- Cyan accent border lines on every panel
-- `▶` prefix headers on all section frames (terminal-style)
-- Console-like log output area with monospace font
-- Professional Tkinter `clam` theme with refined hover/pressed states
+- **白色清爽背景** + 青色（`#00acc1`）强调色配色体系
+- 自定义 **菱形 (◆)** 单选指示器和 **六边形 (⬢)** 复选指示器
+- 每个面板左侧有青色装饰线（accent 边框）
+- 所有区域标题带 `▶` 前缀（终端机甲风格）
+- 控制台风格的日志输出区（等宽字体）
+- 基于 Tkinter `clam` 主题，精细的悬停/按下状态反馈
 
-### 🧪 Built-in Self-Test
+### 🧪 内置自检功能
 
 ```bash
-P3Studio.exe --selftest <output_dir>
+P3Studio.exe --selftest <输出目录>
 ```
 
-Runs a complete encode → decode round-trip on a synthetic audio signal **without a GUI**, validates that all dependencies (Opus DLL, PortAudio, Scipy, SoundFile) are functional in the frozen environment. Results written to `selftest_result.txt`.
+无需打开 GUI，即可运行一遍完整的**编码→解码往返测试**，验证所有依赖（Opus DLL、PortAudio、Scipy、SoundFile）在打包环境中是否正常工作。结果写入 `selftest_result.txt`。
 
 ---
 
-## 📦 Installation
+## 📦 安装方法
 
-### Option 1: Pre-built EXE (Windows, recommended)
+### 方式一：直接下载 EXE（Windows，推荐）
 
-1. Download the latest `P3Studio.exe` from the [Releases](https://github.com/adkjkjdsaghj/p3-studio/releases) page
-2. Place it anywhere — no installation required
-3. Double-click to launch
+1. 从 [Releases 页面](https://github.com/adkjkjdsaghj/p3-studio/releases) 下载最新的 `P3Studio.exe`
+2. 放在任意位置 —— **无需安装，双击即用**
 
-> **System requirements**: Windows 10/11, 64-bit. No Python or libraries needed.
+> **系统要求**：Windows 10/11 64 位。无需安装 Python 或任何依赖库。
 
-### Option 2: Run from Source (Cross-platform)
+### 方式二：从源码运行（跨平台）
 
 ```bash
-# 1. Clone
+# 1. 克隆仓库
 git clone https://github.com/adkjkjdsaghj/p3-studio.git
 cd p3-studio
 
-# 2. Install dependencies
+# 2. 安装依赖
 pip install -r requirements.txt
 
-# 3. Run
+# 3. 运行
 python p3_studio.py
 ```
 
-> **Note on Linux/macOS**: You'll need `libopus` (or `opus.dll` equivalent) installed on your system. The default `opuslib` `find_library` call should locate it automatically.
+> **Linux / macOS 用户须知**：需要系统安装 `libopus`（或等效的 `opus.dll`）。默认情况下 `opuslib` 的 `find_library` 会自动查找。
 
 ---
 
-## 🎮 Usage
+## 🎮 使用指南
 
-### Conversion Tab
+### 转换页面
 
-1. Select **mode**: `音频 → P3` (encode) or `P3 → 音频` (decode)
-2. **Add files** — supports `.wav`, `.flac`, `.ogg` for encoding; `.p3` for decoding
-3. Toggle **loudness normalization** on/off and set target LUFS
-4. Choose **output directory** (defaults to EXE location)
-5. Click **开始转换** — progress logged in terminal-style output panel
+1. 选择**转换模式**：`音频 → P3`（编码）或 `P3 → 音频`（解码）
+2. **添加文件** —— 编码支持 `.wav` / `.flac` / `.ogg`；解码支持 `.p3`
+3. 开关**响度归一化**并设置目标 LUFS 值
+4. 选择**输出目录**（默认是 EXE 所在位置）
+5. 点击 **开始转换** —— 进度实时显示在控制台风格的日志面板
 
-### Player Tab
+### 播放页面
 
-1. **Add files** — load `.p3` files into the playlist
-2. Select a track from the list
-3. Use **▶ 播放 / ⏸ 暂停 / ■ 停止** to control playback
-4. Toggle **⬢ 循环播放** for repeat mode
-5. Status bar shows `▶ filename` / `⏸ 播放已暂停` / `■ 播放已停止`
+1. **添加文件** —— 将 `.p3` 文件载入播放列表
+2. 从列表中选中一个曲目
+3. 使用 **▶ 播放 / ⏸ 暂停 / ■ 停止** 控制播放
+4. 勾选 **⬢ 循环播放** 可重复播放
+5. 状态栏显示 `▶ 文件名` / `⏸ 播放已暂停` / `■ 播放已停止`
 
-### Keyboard Shortcuts
+### 快捷键
 
-| Key | Action |
-|-----|--------|
-| `Enter` (on playlist) | Play selected track |
-| `Delete` (on playlist) | Remove selected track |
+| 按键 | 功能 |
+|------|------|
+| `Enter`（播放列表中） | 播放选中曲目 |
+| `Delete`（播放列表中） | 移除选中曲目 |
 
 ---
 
-## 🛠️ Build from Source
+## 🛠️ 自行编译
 
-### Build the EXE with PyInstaller
+### 用 PyInstaller 打包为 EXE
 
 ```bash
-# Ensure dependencies
+# 安装依赖
 pip install -r requirements.txt
 pip install pyinstaller
 
-# Build
+# 打包
 pyinstaller --noconfirm --onefile --windowed --name "P3Studio" \
-  --add-binary "path/to/opus.dll;." \
-  --add-binary "path/to/opus.dll;pyogg" \
+  --add-binary "你的opus.dll路径;." \
+  --add-binary "你的opus.dll路径;pyogg" \
   --collect-all sounddevice \
   --hidden-import pyloudnorm --hidden-import scipy --hidden-import scipy.signal \
   --hidden-import numpy --hidden-import soundfile --hidden-import opuslib \
@@ -146,120 +143,119 @@ pyinstaller --noconfirm --onefile --windowed --name "P3Studio" \
   p3_studio.py
 ```
 
-**The Opus DLL**: `opus.dll` is required for encoding/decoding. On Windows it ships with the `pyogg` package at `.../site-packages/pyogg/opus.dll`. PyInstaller's `--add-binary` places it in the frozen package root and `pyogg/` subdirectory so that `opuslib`'s `ctypes.find_library('opus')` can locate it.
+**关于 Opus DLL**：编码/解码需要 `opus.dll`。在 Windows 上它随 `pyogg` 包自带，路径为 `.../site-packages/pyogg/opus.dll`。PyInstaller 的 `--add-binary` 会将其打入打包后的包根目录和 `pyogg/` 子目录，确保 `opuslib` 的 `ctypes.find_library('opus')` 能找到它。
 
-**PortAudio**: Handled automatically via `--collect-all sounddevice`, which includes the bundled PortAudio binary from `_sounddevice_data/portaudio-binaries/`.
+**关于 PortAudio**：`--collect-all sounddevice` 会自动收集随包自带的 PortAudio 二进制文件（位于 `_sounddevice_data/portaudio-binaries/`）。
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ 项目架构
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   P3Studio (Tkinter)                │
+│                   P3Studio (Tkinter 界面)            │
 │  ┌──────────────────┐  ┌─────────────────────────┐  │
-│  │  Convert Tab      │  │  Player Tab             │  │
+│  │  转换标签页       │  │  播放标签页             │  │
 │  │  ┌──────────────┐ │  │  ┌───────────────────┐ │  │
-│  │  │ Mode Select  │ │  │  │ Playlist          │ │  │
-│  │  │ (Radiobutton)│ │  │  │ (Listbox + Scroll)│ │  │
+│  │  │ 模式选择     │ │  │  │ 播放列表          │ │  │
+│  │  │ (单选按钮)   │ │  │  │ (列表框+滚动条)   │ │  │
 │  │  ├──────────────┤ │  │  ├───────────────────┤ │  │
-│  │  │ File Browser │ │  │  │ Controls          │ │  │
-│  │  ├──────────────┤ │  │  │ ▶ ⏸ ■  Loop     │ │  │
-│  │  │ Loudness     │ │  │  ├───────────────────┤ │  │
-│  │  │ Normalization│ │  │  │ Status Bar        │ │  │
-│  │  ├──────────────┤ │  │  └───────────────────┘ │  │
-│  │  │ Log Output   │ │  └─────────────────────────┘  │
-│  │  │ (Console)    │ │                               │
-│  │  └──────────────┘ │                               │
+│  │  │ 文件选择     │ │  │  │ 控制按钮          │ │  │
+│  │  ├──────────────┤ │  │  │ ▶ ⏸ ■ 循环     │ │  │
+│  │  │ 响度设置     │ │  │  ├───────────────────┤ │  │
+│  │  ├──────────────┤ │  │  │ 状态栏            │ │  │
+│  │  │ 转换日志     │ │  │  └───────────────────┘ │  │
+│  │  │ (终端风格)   │ │  │                         │  │
+│  │  └──────────────┘ │  └─────────────────────────┘  │
 │  └──────────────────┘                                │
 └─────────────────────────────────────────────────────┘
          │                     │
          ▼                     ▼
 ┌─────────────────┐   ┌──────────────────────┐
-│ Convert Pipeline│   │ Playback Pipeline     │
-│ WAV → Resample  │   │ P3 → Opus Decode     │
-│ (scipy.signal)  │   │ → sounddevice        │
-│ → Opus Encode   │   │ → PortAudio → Speaker│
+│ 转换流水线       │   │ 播放流水线           │
+│ WAV → 重采样    │   │ P3 → Opus 解码      │
+│ (scipy.signal)  │   │ → sounddevice       │
+│ → Opus 编码     │   │ → PortAudio → 扬声器│
 │ (opuslib)       │   └──────────────────────┘
-│ → P3 File       │
+│ → P3 文件       │
 └─────────────────┘
 ```
 
-### Key Libraries
+### 核心依赖库
 
-| Library | Role |
-|---------|------|
-| **opuslib** | Python bindings for libopus — core encoding/decoding |
-| **soundfile** | Read/write WAV, FLAC, OGG audio files |
-| **sounddevice** | Playback via PortAudio (cross-platform audio I/O) |
-| **scipy.signal** | `resample_poly` for high-quality audio resampling to 16 kHz |
-| **pyloudnorm** | ITU-R BS.1770 loudness normalization |
-| **numpy** | Audio data array manipulation |
-| **PyInstaller** | Packaging into standalone Windows EXE |
+| 库 | 作用 |
+|-----|------|
+| **opuslib** | libopus 的 Python 绑定 —— 核心编解码 |
+| **soundfile** | 读写 WAV、FLAC、OGG 音频文件 |
+| **sounddevice** | 基于 PortAudio 的音频播放 |
+| **scipy.signal** | `resample_poly` 高质量重采样至 16 kHz |
+| **pyloudnorm** | ITU-R BS.1770 响度归一化 |
+| **numpy** | 音频数据数组操作 |
+| **PyInstaller** | 打包为独立 Windows EXE |
 
-### Why not librosa?
+### 为什么不用 librosa？
 
-The prototyping phase used librosa for audio loading and resampling, but it pulls in **numba + llvmlite**, which balloons the frozen EXE to 150+ MB with slow startup. The final build uses `soundfile` + `scipy.signal.resample_poly` instead — achieving the same quality at **58 MB with fast cold-start**.
+原型阶段使用了 librosa 进行音频加载和重采样，但它会引入 **numba + llvmlite**，导致打包后的 EXE 体积膨胀到 150 MB 以上且启动缓慢。最终版本改用 `soundfile` + `scipy.signal.resample_poly`—— 在保持相同质量的前提下，EXE 仅 **58 MB**，冷启动飞快。
 
 ---
 
-## 📁 Project Structure
+## 📁 目录结构
 
 ```
 p3-studio/
-├── p3_studio.py          # Main application (Tkinter GUI + core logic)
-├── requirements.txt      # Python dependencies
-├── README.md             # This file
-├── LICENSE               # MIT License
-└── .gitignore            # Git ignore rules
+├── p3_studio.py          # 主程序（Tkinter GUI + 核心逻辑）
+├── requirements.txt      # Python 依赖列表
+├── README.md             # 本文件
+├── LICENSE               # MIT 开源许可
+└── .gitignore            # Git 忽略规则
 ```
 
 ---
 
-## 🔧 Troubleshooting
+## 🔧 常见问题
 
-### "opus.dll not found" error
+### "opus.dll not found" 错误
 
-The EXE includes `opus.dll`, but if you see this error in a custom environment:
+EXE 已内置 `opus.dll`，但在以下情况可能出现此错误：
 
-- **Run from source**: Install `pyogg` or place `opus.dll` in a system PATH directory
-- **Run from EXE**: Use `--selftest` to verify the frozen environment; if it passes, the issue is elsewhere
+- **从源码运行**：安装 `pyogg` 或将 `opus.dll` 放到系统 PATH 目录中
+- **从 EXE 运行**：使用 `--selftest` 验证打包环境；如果自检通过，问题出在其他地方
 
-### No audio output (playback)
+### 播放没有声音
 
-- Check your system sound settings and speaker connection
-- The status bar should show `▶` when playing; if it immediately shows `■`, the file may be corrupted
-- Run `P3Studio.exe --selftest .` to verify the playback chain
+- 检查系统音量设置和扬声器连接
+- 状态栏应显示 `▶`；如果立刻显示 `■`，文件可能损坏
+- 运行 `P3Studio.exe --selftest .` 验证播放链路
 
-### Conversion fails on certain WAV files
+### 某些 WAV 文件转换失败
 
-- The tool expects PCM-encoded WAV. Compressed formats (e.g., WMA, MP3-in-WAV) are not supported
-- Convert to standard PCM WAV first using a tool like FFmpeg
-- Non-standard sample rates are automatically resampled to 16 kHz
+- 本工具只处理 PCM 编码的 WAV。压缩格式（如 WMA、MP3-in-WAV）不支持
+- 可先用 FFmpeg 等工具转换为标准 PCM WAV
+- 非标准采样率会自动重采样至 16 kHz
 
-### Large EXE size
+### EXE 体积较大
 
-The EXE (~58 MB) includes:
-- Python runtime and standard library
-- NumPy / SciPy numerical libraries
-- Opus codec DLL (libopus)
-- PortAudio audio I/O library
-- All GUI and support code
+EXE 体积约 58 MB，包含：
+- Python 运行时和标准库
+- NumPy / SciPy 科学计算库
+- Opus 编解码器 DLL（libopus）
+- PortAudio 音频 I/O 库
+- 所有 GUI 和支持代码
 
-This is normal for PyInstaller-packaged Python applications with scientific dependencies.
+这是 PyInstaller 打包 Python 数值计算应用的正常大小。
 
 ---
 
-## 🧪 Self-Test (Quick Validation)
+## 🧪 快速自检
 
-To verify your copy of P3Studio is working correctly:
+验证当前 P3Studio 是否正常工作：
 
 ```bash
-# In the folder containing P3Studio.exe
+# 在 P3Studio.exe 所在目录打开终端
 P3Studio.exe --selftest .
 ```
 
-This creates a `selftest_result.txt` file. A successful result looks like:
+成功结果示例：
 
 ```
 === P3Studio Self-Test ===
@@ -270,26 +266,26 @@ result: Pass (src=0.84s dst=0.90s delta=0.06s)
 
 ---
 
-## 🤝 Contributing
+## 🤝 贡献指南
 
-Contributions are welcome! This is a small focused tool, so please open an [issue](https://github.com/adkjkjdsaghj/p3-studio/issues) first to discuss your proposed changes.
+欢迎提交 Issue 和 Pull Request！这是一个小型的专注工具，建议先开 [Issue](https://github.com/adkjkjdsaghj/p3-studio/issues) 讨论你的想法。
 
-**Ideas for improvement:**
-- Linux/macOS support (requires native opus library)
-- MP3 input support (via FFmpeg integration or pydub)
-- Drag-and-drop file adding
-- Dark/light theme toggle
-- Volume slider
-- Converted file list with metadata display
+**待改进方向：**
+- Linux / macOS 支持（需要原生 opus 库）
+- MP3 输入支持（通过 FFmpeg 集成或 pydub）
+- 拖拽添加文件
+- 深色/浅色主题切换
+- 音量滑块
+- 转换文件列表 + 元数据显示
 
 ---
 
-## 📜 License
+## 📜 开源许可
 
-Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
+本项目基于 **MIT License** 开源。详见 [LICENSE](LICENSE) 文件。
 
 ---
 
 <div align="center">
-Made with ❤️ for embedded AI voice assistant development
+为嵌入式 AI 语音助手开发而打造 ❤️
 </div>
